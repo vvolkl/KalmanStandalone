@@ -151,7 +151,21 @@ int main() {
   std::cout << "number of filtered states: " << filtered_states.size() << std::endl;
 
 
-  Eigen::Matrix<double, 5, 5>
+  /// F ... Transport Jacobian
+  Eigen::Matrix<double, 5, 5> F =  Eigen::Matrix<double, 5, 5>::Random();
+
+  auto it = filtered_states.rbegin();
+
+     // for the last measurement the filtered state and the smoothed state are
+         // equal
+
+
+  decltype(it) pLast = it++;
+  for (; it != filtered_states.rend(); ++it, ++pLast) {
+    std::cout << (*it) << std::endl;
+
+  }
+
 
 
   // not that the filtering still updates 
