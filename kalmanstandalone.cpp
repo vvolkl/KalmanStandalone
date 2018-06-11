@@ -58,8 +58,7 @@ int main() {
 
 
   // book keeping of states
-  std::list<Eigen::Matrix<double, 5, 1>> filtered_states;
-  std::list<Eigen::Matrix<double, 5, 5>> filtered_states_cov;
+  std::list<std::pair<Eigen::Matrix<double, 5, 1>, Eigen::Matrix<double, 5, 5>>> filtered_states;
   std::list<Eigen::Matrix<double, 5, 1>> smoothed_states;
   std::list<Eigen::Matrix<double, 5, 5>> smoothed_states_cov;
   std::list<Eigen::Matrix<double, 5, 1>> predicted_states;
@@ -137,8 +136,7 @@ int main() {
       std::cout << new_C << std::endl;
 
 
-      filtered_states.push_back(new_p);
-      filtered_states_cov.push_back(new_C);
+      filtered_states.push_back(std::make_pair(new_p, new_C));
 
 
 
@@ -151,8 +149,6 @@ int main() {
   std::cout << "number of filtered states: " << filtered_states.size() << std::endl;
 
 
-  /// F ... Transport Jacobian
-  Eigen::Matrix<double, 5, 5> F =  Eigen::Matrix<double, 5, 5>::Random();
 
   auto it = filtered_states.rbegin();
 
@@ -161,9 +157,21 @@ int main() {
 
 
   decltype(it) pLast = it++;
+  unsigned int backCounter = 0;
   for (; it != filtered_states.rend(); ++it, ++pLast) {
-    std::cout << (*it) << std::endl;
 
+    /// F ... Transport Jacobian
+    Eigen::Matrix<double, 5, 5> F =  Eigen::Matrix<double, 5, 5>::Random();
+
+    std::cout << "filtered states" << std::endl;
+    std::cout << (*it).first  << std::endl;
+    std::cout << "filtered cov" << std::endl;
+    std::cout << (*it).second  << std::endl;
+    auto filtered_C = (*it).second;
+    /// A: todo
+    auto A = filtered_C * F * filtered_C.inverse();
+
+  backCounter ++;
   }
 
 
